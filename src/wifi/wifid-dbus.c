@@ -37,13 +37,11 @@ static char *peer_dbus_get_path(struct peer *p)
 
 	sprintf(buf, "%s@%u", p->p2p_mac, p->l->ifindex);
 
-	r = sd_bus_path_encode("/org/freedesktop/miracle/wifi/peer",
-			       buf,
-			       &node);
-	if (r < 0) {
-		log_vERR(r);
+	r = sd_bus_label_escape(buf);
+	if(!r)
 		return NULL;
-	}
+		
+	node = shl_strjoin("/org/freedesktop/miracle/wifi/peer", "/", r, NULL);
 
 	return node;
 }
@@ -309,7 +307,8 @@ static int peer_dbus_find(sd_bus *bus,
 	r = sd_bus_label_unescape(e);
 	if (!r)
 		return -1;
-
+	
+	label=r;
 
 	sep = strchr(label, '@');
 	if (sep) {
