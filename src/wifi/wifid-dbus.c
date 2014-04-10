@@ -32,8 +32,7 @@
 
 static char *peer_dbus_get_path(struct peer *p)
 {
-	char buf[128], *node;
-	int r;
+	char buf[128], *node, *r;
 
 	sprintf(buf, "%s@%u", p->p2p_mac, p->l->ifindex);
 
