@@ -47,18 +47,15 @@ static char *peer_dbus_get_path(struct peer *p)
 
 static char *link_dbus_get_path(struct link *l)
 {
-	char buf[128], *node;
-	int r;
+	char buf[128], *node , *r;
 
 	sprintf(buf, "%u", l->ifindex);
 
-	r = sd_bus_path_encode("/org/freedesktop/miracle/wifi/link",
-			       buf,
-			       &node);
-	if (r < 0) {
-		log_vERR(r);
+	r = sd_bus_label_escape(buf);
+	if(!r)
 		return NULL;
-	}
+		
+	node = shl_strjoin("/org/freedesktop/miracle/wifi/peer", "/", r, NULL);
 
 	return node;
 }
@@ -582,14 +579,17 @@ static int link_dbus_find(sd_bus *bus,
 	_shl_free_ char *label = NULL;
 	struct manager *m = data;
 	struct link *l;
-	int r;
+	const char *e;
+	char *r;
 
-	r = sd_bus_path_decode(path,
-			       "/org/freedesktop/miracle/wifi/link",
-			       &label);
-	if (r <= 0)
-		return r;
-
+	e = shl_startswith(path,"/org/freedesktop/miracle/wifi/peer");
+	r = sd_bus_label_unescape(e);
+	
+	if (!r)
+		return -1;
+	
+	label=r;
+	
 	l = manager_find_link_by_label(m, label);
 	if (!l || !l->public)
 		return 0;
