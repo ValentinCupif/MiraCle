@@ -30,6 +30,9 @@
 #include "util.h"
 #include "wifid.h"
 
+
+
+
 static char *peer_dbus_get_path(struct peer *p)
 {
 	char buf[128], *node;

@@ -139,6 +139,14 @@ uint64_t shl_now(clockid_t clock);
 
 /* ratelimit */
 
+
+/* Systemd */
+
+int sd_bus_path_encode(const char *prefix, const char *external_id, char **ret_path);
+int sd_bus_path_decode(const char *path, const char *prefix, char **external_id);
+
+
+
 struct shl_ratelimit {
 	uint64_t interval;
 	uint64_t begin;

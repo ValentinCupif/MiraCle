@@ -923,3 +923,43 @@ good:
 	++r->num;
 	return true;
 }
+
+
+
+int sd_bus_path_encode(const char *prefix, const char *external_id, char **ret_path) {
+        char *e = NULL;
+        char *ret;
+
+
+        e = sd_bus_label_escape(external_id);
+        if (!e)
+                return -1;
+
+        ret = shl_strjoin(prefix, "/", e, NULL);
+        if (!ret)
+                return -1;
+
+        *ret_path = ret;
+        return 0;
+}
+
+int sd_bus_path_decode(const char *path, const char *prefix, char **external_id) {
+        const char *e;
+        char *ret;
+
+
+        e = shl__path_startswith(path, prefix);
+        if (!e) {
+                *external_id = NULL;
+                return 0;
+        }
+
+        ret = bus_label_unescape(e);
+        if (!ret)
+                return -1;
+
+        *external_id = ret;
+        return 1;
+}
+
+
