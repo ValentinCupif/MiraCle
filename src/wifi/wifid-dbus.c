@@ -300,14 +300,16 @@ static int peer_dbus_find(sd_bus *bus,
 	struct manager *m = data;
 	struct link *l;
 	struct peer *p;
+	const char *e;
 	char *sep;
-	int r;
+	char *r;
+	
+	e = shl_startswith(path,"/org/freedesktop/miracle/wifi/peer");
+	
+	r = sd_bus_label_unescape(e);
+	if (!r)
+		return -1;
 
-	r = sd_bus_path_decode(path,
-			       "/org/freedesktop/miracle/wifi/peer",
-			       &label);
-	if (r <= 0)
-		return r;
 
 	sep = strchr(label, '@');
 	if (sep) {
