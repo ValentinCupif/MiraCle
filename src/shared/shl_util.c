@@ -954,7 +954,7 @@ int sd_bus_path_decode(const char *path, const char *prefix, char **external_id)
                 return 0;
         }
 
-        ret = bus_label_unescape(e);
+        ret = sd_bus_label_unescape(e);
         if (!ret)
                 return -1;
 
